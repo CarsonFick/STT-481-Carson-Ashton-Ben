@@ -1,0 +1,57 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, warning=FALSE}
+library(leaps)
+library(glmnet)
+library(class)
+library(DMwR)
+library(pls)
+library(boot)
+library(plyr)
+library(FNN)
+library(gam)
+library(tree)
+library(randomForest)
+library(gbm)
+```
+
+
+###Data Cleaning
+
+```{r}
+#Read in test and train data, accounting for headers and NA values
+train <- read.csv("train.csv", header = TRUE, na.strings = "NA")
+test <- read.csv("test.csv", header = TRUE, na.strings = "NA")
+
+#How many NAs and a look at Lot Frontage NAs
+colSums(is.na(train))
+min(train$LotFrontage, na.rm = T)
+```
+
+Id    MSSubClass      MSZoning   LotFrontage       LotArea        Street         Alley 
+            0             0             0           259             0             0          1369 
+     LotShape   LandContour     Utilities     LotConfig     LandSlope  Neighborhood    Condition1 
+            0             0             0             0             0             0             0 
+   Condition2      BldgType    HouseStyle   OverallQual   OverallCond     YearBuilt  YearRemodAdd 
+            0             0             0             0             0             0             0 
+    RoofStyle      RoofMatl   Exterior1st   Exterior2nd    MasVnrType    MasVnrArea     ExterQual 
+            0             0             0             0             8             8             0 
+    ExterCond    Foundation      BsmtQual      BsmtCond  BsmtExposure  BsmtFinType1    BsmtFinSF1 
+            0             0            37            37            38            37             0 
+ BsmtFinType2    BsmtFinSF2     BsmtUnfSF   TotalBsmtSF       Heating     HeatingQC    CentralAir 
+           38             0             0             0             0             0             0 
+   Electrical     X1stFlrSF     X2ndFlrSF  LowQualFinSF     GrLivArea  BsmtFullBath  BsmtHalfBath 
+            1             0             0             0             0             0             0 
+     FullBath      HalfBath  BedroomAbvGr  KitchenAbvGr   KitchenQual  TotRmsAbvGrd    Functional 
+            0             0             0             0             0             0             0 
+   Fireplaces   FireplaceQu    GarageType   GarageYrBlt  GarageFinish    GarageCars    GarageArea 
+            0           690            81            81            81             0             0 
+   GarageQual    GarageCond    PavedDrive    WoodDeckSF   OpenPorchSF EnclosedPorch    X3SsnPorch 
+           81            81             0             0             0             0             0 
+  ScreenPorch      PoolArea        PoolQC         Fence   MiscFeature       MiscVal        MoSold 
+            0             0          1453          1179          1406             0             0 
+       YrSold      SaleType SaleCondition     SalePrice 
+            0             0             0             0 
